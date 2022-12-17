@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: longhorn
+  namespace: monitoring
+spec:
+  replicas: 2
+  alerting:
+    alertmanagers:
+      - namespace: monitoring
+        name: alertmanager-longhorn
+        port: web
+  serviceMonitorSelector:
+    matchLabels:
+      name: longhorn-prometheus-servicemonitor
+  ruleSelector:
+    matchLabels:
+      prometheus: longhorn
+      role: alert-rules 
