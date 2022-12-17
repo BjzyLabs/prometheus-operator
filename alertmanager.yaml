@@ -1,0 +1,35 @@
+global:
+  resolve_timeout: 5m
+route:
+  group_by: [alertname]
+  receiver: email_and_slack
+receivers:
+- name: email_and_slack
+  email_configs:
+  - to: 'longhorn@bjzy.me'
+    from: 'Alertmanager@bjzy.me'
+    smarthost: 'mail.gandi.net:25'
+    # SMTP authentication information.
+    auth_username: 'web@briancharbonneau.com'
+    auth_password: '2g01B0lmiLaUuf'
+    headers:
+      subject: 'Longhorn-Alert'
+    text: |-
+      {{ range .Alerts }}
+        *Alert:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`
+        *Description:* {{ .Annotations.description }}
+        *Details:*
+        {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+        {{ end }}
+      {{ end }}
+  slack_configs:
+  - api_url: 'https://hooks.slack.com/services/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'
+    channel: '#maintenance'
+    text: |-
+      {{ range .Alerts }}
+        *Alert:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`
+        *Description:* {{ .Annotations.description }}
+        *Details:*
+        {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+        {{ end }}
+      {{ end }}
